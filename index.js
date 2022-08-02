@@ -2,6 +2,10 @@ const express = require('express');
 const fs = require('fs').promises;
 const bodyParser = require('body-parser');
 
+const { generateToken } = require('./utils/tokenGenerator');
+const { validateEmail } = require('./utils/validateEmail');
+const { validatePassword } = require('./utils/validatePassword');
+
 const app = express();
 app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
@@ -29,6 +33,12 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(HTTP_NOT_FOUND).json({ message: 'Pessoa palestrante não encontrada' });
   }
   return res.status(HTTP_OK_STATUS).json(talker);
+});
+
+app.post('/login', validateEmail, validatePassword, (_req, res) => {
+  const newToken = generateToken();
+
+  res.status(HTTP_OK_STATUS).json({ token: newToken });
 });
 
 app.listen(PORT, () => {
