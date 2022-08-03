@@ -5,13 +5,20 @@ const bodyParser = require('body-parser');
 const { generateToken } = require('./utils/tokenGenerator');
 const { validateEmail } = require('./utils/validateEmail');
 const { validatePassword } = require('./utils/validatePassword');
+const { createTalker } = require('./utils/createTalker');
+const { validateToken } = require('./utils/validateToken');
+const { validateName } = require('./utils/validateName');
+const { validateAge } = require('./utils/validateAge');
+const { validateTalk } = require('./utils/validateTalk');
+const { validateDate } = require('./utils/validateDate');
+const { validateRate } = require('./utils/validateRate');
 
 const app = express();
 app.use(bodyParser.json());
 const HTTP_OK_STATUS = 200;
 const HTTP_NOT_FOUND = 404;
 const PORT = '3000';
-
+const HTTP_CREATED_STATUS = 201;
 const PATH = './talker.json';
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -39,6 +46,26 @@ app.post('/login', validateEmail, validatePassword, (_req, res) => {
   const newToken = generateToken();
 
   res.status(HTTP_OK_STATUS).json({ token: newToken });
+});
+
+app.post('/talker', 
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateDate,
+  validateRate,
+  async (req, res) => {
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const array = await fs.readFile(PATH, 'utf-8');
+  const talkerArray = JSON.parse(array);
+  const newId = talkerArray.length + 1;
+  const newTalker = { name, id: newId, age, talk: { watchedAt, rate } };
+
+  talkerArray.push(newTalker);
+  await createTalker(talkerArray);
+
+  return res.status(HTTP_CREATED_STATUS).json(newTalker);
 });
 
 app.listen(PORT, () => {
