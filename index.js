@@ -90,6 +90,17 @@ app.put('/talker/:id',
   return res.status(HTTP_OK_STATUS).json(talkerArray[talkerIndex]);
 });
 
+app.delete('/talker/:id', validateToken, async (req, res) => {
+  const { id } = req.params;
+  const array = await fs.readFile(PATH, 'utf-8');
+  const talkerArray = JSON.parse(array);
+  const filteredTalkers = talkerArray.filter((item) => item.id !== Number(id));
+
+  await createTalker(filteredTalkers);
+
+  return res.status(HTTP_NO_CONTENT_STATUS).end();
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
