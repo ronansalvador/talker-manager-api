@@ -19,6 +19,7 @@ const HTTP_OK_STATUS = 200;
 const HTTP_NOT_FOUND = 404;
 const PORT = '3000';
 const HTTP_CREATED_STATUS = 201;
+const HTTP_NO_CONTENT_STATUS = 204;
 const PATH = './talker.json';
 
 // não remova esse endpoint, e para o avaliador funcionar
