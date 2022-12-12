@@ -24,7 +24,7 @@ const PATH = './talker.json';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
-  response.status(HTTP_OK_STATUS).send();
+  response.status(HTTP_OK_STATUS).json({ message: 'teste de rota principal' });
 });
 
 app.get('/talker/search', validateToken, async (req, res) => {
@@ -35,7 +35,7 @@ app.get('/talker/search', validateToken, async (req, res) => {
   return res.status(HTTP_OK_STATUS).json(searchTalkers);
 });
 
-app.get('/talker', async (req, res) => {
+app.get('/talker', async (_req, res) => {
   const talker = await fs.readFile(PATH, 'utf-8');
   if (!talker) return res.status(HTTP_OK_STATUS).json([]);
   res.status(HTTP_OK_STATUS).json(JSON.parse(talker));
@@ -110,5 +110,5 @@ app.delete('/talker/:id', validateToken, async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log('Online');
+  console.log('Online', PORT);
 });
